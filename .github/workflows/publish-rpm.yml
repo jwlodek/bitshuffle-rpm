@@ -53,9 +53,16 @@ jobs:
         run: |
           make rpm
 
-      - name: Upload rpms and srpms to release
+      - name: Upload rpms to release
         run: |
-          gh release upload ${{ github.event.release.tag_name }} *.rpm *.src.rpm --clobber
+          gh release upload ${{ github.event.release.tag_name }} *.rpm --clobber
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload srpm to release
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} *.src.rpm --clobber
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
