@@ -69,5 +69,8 @@ cp lz4/*.h %{buildroot}%{_includedir}/bitshuffle
 
 
 %changelog
+* Wed Mar 11 2026 Wlodek, Jakub <jwlodek@bnl.gov> - 0.5.2-2
+- Update permissions on main shared library file.
+
 * Wed Mar 11 2026 Wlodek, Jakub <jwlodek@bnl.gov> - 0.5.2-1
 - Initial release of the bitshuffle library as an rpm.
