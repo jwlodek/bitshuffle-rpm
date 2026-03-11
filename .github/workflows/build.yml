@@ -1,12 +1,16 @@
 ---
-
-name: Build and Publish RPM on Release
+name: Build RPMs and SRPMs
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-publish:
+  build:
+    name: Build RPMs and SRPMs for EL${{ matrix.alma_version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -33,7 +37,6 @@ jobs:
         run: |
           dnf config-manager --set-enabled crb
 
-
       - name: Enable EPEL repository
         run: |
           dnf install -y epel-release
@@ -49,15 +52,3 @@ jobs:
       - name: Build rpm
         run: |
           make rpm
-      
-      - name: Setup GitHub CLI
-        uses: actions4gh/setup-gh@v1
-        with:
-          gh-version: latest
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload rpms and srpms to release
-        run: |
-          gh release upload ${{ github.event.release.tag_name }} *.rpm *.src.rpm --clobber
-        env:
-          GH_REPO: ${{ github.repository }}
