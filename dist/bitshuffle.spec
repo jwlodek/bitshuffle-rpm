@@ -51,7 +51,7 @@ gcc -shared -Wl,-soname,libbitshuffle.so.%{version} -o libbitshuffle.so.%{versio
 %{__install} -d -m 0755 %{buildroot}%{_libdir}
 %{__install} -d -m 0755 %{buildroot}%{_includedir}/bitshuffle
 
-%{__install} -m 0644 build/libbitshuffle.so.%{version} %{buildroot}%{_libdir}/.
+%{__install} -m 0755 build/libbitshuffle.so.%{version} %{buildroot}%{_libdir}/.
 ln -s libbitshuffle.so.%{version} %{buildroot}%{_libdir}/libbitshuffle.so
 
 cp src/*.h %{buildroot}%{_includedir}/bitshuffle
