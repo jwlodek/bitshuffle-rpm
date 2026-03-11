@@ -9,6 +9,7 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         alma_version: [8, 9, 10]
     container:
@@ -17,6 +18,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Enable EPEL repository
+        run: |
+          dnf install -y epel-release
 
       - name: Install dependencies
         run: |
