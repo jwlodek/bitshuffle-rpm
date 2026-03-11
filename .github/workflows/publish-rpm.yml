@@ -31,7 +31,7 @@ jobs:
         run: |
           make srpm
 
-      - name: Build RPM
+      - name: Build rpm
         run: |
           make rpm
       
