@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build RPMs and SRPMs for EL${{ matrix.alma_version }}
+    name: EL${{ matrix.alma_version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
