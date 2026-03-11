@@ -1,12 +1,16 @@
 ---
-
-name: Build and Publish RPM on Release
+name: Build RPMs and SRPMs
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-publish:
+  build:
+    name: Build RPMs and SRPMs for EL${{ matrix.alma_version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -29,9 +33,3 @@ jobs:
       - name: Build RPM
         run: |
           make rpm
-      
-      - name: Upload rpms and srpms to release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run:
-          gh release upload ${{ github.event.release.tag_name }} *.rpm *.src.rpm --clobber
