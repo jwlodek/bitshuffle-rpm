@@ -23,6 +23,15 @@ BuildArch:      x86_64
 %description
 Filter for improving compression of typed binary data.
 
+%package devel
+Summary:        Development files for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description devel
+This package contains the header files, unversioned shared libraries
+(e.g., .so files), and other resources needed for developing applications
+that use %{name}.
+
 %prep
 %autosetup
 
@@ -33,22 +42,24 @@ gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../lz4/lz4.c -o lz4.o
 gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../src/iochain.c -o iochain.o
 gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../src/bitshuffle_core.c -o bitshuffle_core.o
 gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../src/bitshuffle.c -o bitshuffle.o
-gcc -shared -o libbitshuffle.so.%{version} lz4.o iochain.o bitshuffle_core.o bitshuffle.o -lhdf5 -lzstd
+gcc -shared -Wl,-soname,libbitshuffle.so.${version} -o libbitshuffle.so.%{version} lz4.o iochain.o bitshuffle_core.o bitshuffle.o -lhdf5 -lzstd
 
 
 %install
-mkdir -p %{buildroot}%{_libdir}
-mkdir -p %{buildroot}%{_includedir}/bitshuffle
+%{__install} -d -m 0755 %{buildroot}%{_libdir}
+%{__install} -d -m 0755 %{buildroot}%{_includedir}/bitshuffle
 
-cp build/libbitshuffle.so.%{version} %{buildroot}%{_libdir}/.
-ln -rs  %{buildroot}/%{_libdir}/libbitshuffle.so.%{version} %{buildroot}/%{_libdir}/libbitshuffle.so
+%{__install} -m 0644 build/libbitshuffle.so.%{version} %{buildroot}%{_libdir}/.
 
 cp src/*.h %{buildroot}%{_includedir}/bitshuffle
 cp lz4/*.h %{buildroot}%{_includedir}/bitshuffle
 
 
 %files
-%{_libdir}/libbitshuffle*
+%{_libdir}/libbitshuffle.so.%{version}
+
+%files devel
+%{_libdir}/*
 %{_includedir}/bitshuffle/*
 
 
