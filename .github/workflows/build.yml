@@ -23,6 +23,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install config-manager dnf plugin
+        run: |
+          dnf install -y 'dnf-command(config-manager)'
+
       - name: On EL8, enable PowerTools repository
         if: matrix.alma_version == '8'
         run: |
