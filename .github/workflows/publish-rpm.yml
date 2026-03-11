@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          dnf install -y hdf5-devel libzstd-devel gcc make
+          dnf install -y hdf5-devel libzstd-devel gcc make rpmbuild
 
       - name: Build srpm
         run: |
