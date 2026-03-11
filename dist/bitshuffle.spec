@@ -6,12 +6,12 @@ Version:        0.5.2
 Release:        1%{?dist}
 Summary:        Filter for improving compression of typed binary data.
 
-License:        BSD-3-Clause
+License:        LicenseRef-Callaway-MIT
 URL:            https://github.com/NSLS2/bitshuffle-rpm
 Source0:        https://github.com/kiyo-masui/bitshuffle/archive/refs/tags/%{version}.tar.gz
 
 BuildRequires:  hdf5-devel libzstd-devel gcc
-Requires:       hdf5
+Requires:       hdf5 libzstd
 Recommends:     git
 
 BuildArch:      x86_64
@@ -25,7 +25,9 @@ Filter for improving compression of typed binary data.
 
 %package devel
 Summary:        Development files for %{name}
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}%{?_includedirisa} = %{version}-%{release}
+Requires:       hdf5-devel
+Requires:       libzstd-devel
 
 %description devel
 This package contains the header files, unversioned shared libraries
@@ -42,7 +44,7 @@ gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../lz4/lz4.c -o lz4.o
 gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../src/iochain.c -o iochain.o
 gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../src/bitshuffle_core.c -o bitshuffle_core.o
 gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../src/bitshuffle.c -o bitshuffle.o
-gcc -shared -Wl,-soname,libbitshuffle.so.${version} -o libbitshuffle.so.%{version} lz4.o iochain.o bitshuffle_core.o bitshuffle.o -lhdf5 -lzstd
+gcc -shared -Wl,-soname,libbitshuffle.so.%{version} -o libbitshuffle.so.%{version} lz4.o iochain.o bitshuffle_core.o bitshuffle.o -lhdf5 -lzstd
 
 
 %install
@@ -50,16 +52,19 @@ gcc -shared -Wl,-soname,libbitshuffle.so.${version} -o libbitshuffle.so.%{versio
 %{__install} -d -m 0755 %{buildroot}%{_includedir}/bitshuffle
 
 %{__install} -m 0644 build/libbitshuffle.so.%{version} %{buildroot}%{_libdir}/.
+ln -s libbitshuffle.so.%{version} %{buildroot}%{_libdir}/libbitshuffle.so
 
 cp src/*.h %{buildroot}%{_includedir}/bitshuffle
 cp lz4/*.h %{buildroot}%{_includedir}/bitshuffle
 
 
 %files
+%license LICENSE
 %{_libdir}/libbitshuffle.so.%{version}
 
 %files devel
-%{_libdir}/*
+%license LICENSE
+%{_libdir}/libbitshuffle.so
 %{_includedir}/bitshuffle/*
 
 
