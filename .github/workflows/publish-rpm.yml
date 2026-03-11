@@ -19,13 +19,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: On EL8, enable PowerTools repository
+        if: matrix.alma_version == '8'
+        run: |
+          dnf config-manager --set-enabled powertools
+
+      - name: On newer EL versions, enable crb repository
+        if: matrix.alma_version != '8'
+        run: |
+          dnf config-manager --set-enabled crb
+
+
       - name: Enable EPEL repository
         run: |
           dnf install -y epel-release
 
       - name: Install dependencies
         run: |
-          dnf install -y hdf5-devel libzstd-devel gcc make rpmbuild
+          dnf install -y hdf5-devel libzstd-devel gcc make rpmdevtools
 
       - name: Build srpm
         run: |
@@ -35,8 +46,15 @@ jobs:
         run: |
           make rpm
       
+      # Install the GitHub CLI (gh)
+      - name: Setup GitHub CLI
+        uses: actions4gh/setup-gh@v1
+        with:
+          gh-version: latest
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload rpms and srpms to release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run:
+        run: |
           gh release upload ${{ github.event.release.tag_name }} *.rpm *.src.rpm --clobber
+        env:
+          GH_REPO: ${{ github.repository }}
