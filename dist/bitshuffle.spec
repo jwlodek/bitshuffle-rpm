@@ -3,7 +3,7 @@
 
 Name:           bitshuffle
 Version:        0.5.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Filter for improving compression of typed binary data.
 
 License:        LicenseRef-Callaway-MIT
