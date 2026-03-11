@@ -32,7 +32,7 @@ jobs:
         run: |
           dnf config-manager --set-enabled powertools
 
-      - name: On newer EL versions, enable crb repository
+      - name: On newer EL versions, enable CRB repository
         if: matrix.alma_version != '8'
         run: |
           dnf config-manager --set-enabled crb
