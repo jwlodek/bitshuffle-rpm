@@ -51,10 +51,9 @@ jobs:
           make rpm
       
       - name: Setup GitHub CLI
-        uses: actions4gh/setup-gh@v1
+        uses: cli/gh-action@v1
         with:
           gh-version: latest
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload rpms and srpms to release
         run: |
