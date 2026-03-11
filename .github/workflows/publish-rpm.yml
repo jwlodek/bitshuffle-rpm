@@ -33,14 +33,17 @@ jobs:
         run: |
           dnf config-manager --set-enabled crb
 
-
       - name: Enable EPEL repository
         run: |
           dnf install -y epel-release
 
+      - name: Add GitHub CLI repository
+        run: |
+          dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+
       - name: Install dependencies
         run: |
-          dnf install -y hdf5-devel libzstd-devel gcc make rpmdevtools
+          dnf install -y hdf5-devel libzstd-devel gcc make rpmdevtools gh
 
       - name: Build srpm
         run: |
@@ -49,14 +52,10 @@ jobs:
       - name: Build rpm
         run: |
           make rpm
-      
-      - name: Setup GitHub CLI
-        uses: cli/gh-action@v1
-        with:
-          gh-version: latest
 
       - name: Upload rpms and srpms to release
         run: |
           gh release upload ${{ github.event.release.tag_name }} *.rpm *.src.rpm --clobber
         env:
           GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
