@@ -16,6 +16,9 @@ jobs:
     container:
       image: almalinux:${{ matrix.alma_version }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
       - name: Build RPM and SRPM
         uses: ./.github/actions/build-rpm-and-srpm
         with:

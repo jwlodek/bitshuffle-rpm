@@ -20,6 +20,8 @@ jobs:
       image: almalinux:${{ matrix.alma_version }}
       options: --user root
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
 
       - name: Build RPM and SRPM
         uses: ./.github/actions/build-rpm-and-srpm

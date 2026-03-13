@@ -9,8 +9,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v6
 
     - name: Install config-manager dnf plugin
       run: |
