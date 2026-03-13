@@ -15,44 +15,11 @@ jobs:
         alma_version: [8, 9, 10]
     container:
       image: almalinux:${{ matrix.alma_version }}
-      options: --user root
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install config-manager dnf plugin
-        run: |
-          dnf install -y 'dnf-command(config-manager)'
-
-      - name: On EL8, enable PowerTools repository
-        if: matrix.alma_version == '8'
-        run: |
-          dnf config-manager --set-enabled powertools
-
-      - name: On newer EL versions, enable CRB repository
-        if: matrix.alma_version != '8'
-        run: |
-          dnf config-manager --set-enabled crb
-
-      - name: Enable EPEL repository
-        run: |
-          dnf install -y epel-release
-
-      - name: Add GitHub CLI repository
-        run: |
-          dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
-
-      - name: Install dependencies
-        run: |
-          dnf install -y hdf5-devel libzstd-devel gcc make rpmdevtools gh
-
-      - name: Build srpm
-        run: |
-          make srpm
-
-      - name: Build rpm
-        run: |
-          make rpm
+      - name: Build RPM and SRPM
+        uses: ./.github/actions/build-rpm-and-srpm
+        with:
+          alma_version: ${{ matrix.alma_version }}
 
       - name: Upload rpms to release
         run: |
