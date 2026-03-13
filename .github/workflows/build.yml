@@ -21,34 +21,10 @@ jobs:
       options: --user root
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Install config-manager dnf plugin
-        run: |
-          dnf install -y 'dnf-command(config-manager)'
+      - name: Build RPM and SRPM
+        uses: ./.github/actions/build-rpm-and-srpm
+        with:
+          alma_version: ${{ matrix.alma_version }}
 
-      - name: On EL8, enable PowerTools repository
-        if: matrix.alma_version == '8'
-        run: |
-          dnf config-manager --set-enabled powertools
-
-      - name: On newer EL versions, enable CRB repository
-        if: matrix.alma_version != '8'
-        run: |
-          dnf config-manager --set-enabled crb
-
-      - name: Enable EPEL repository
-        run: |
-          dnf install -y epel-release
-
-      - name: Install dependencies
-        run: |
-          dnf install -y hdf5-devel libzstd-devel gcc make rpmdevtools
-
-      - name: Build srpm
-        run: |
-          make srpm
-
-      - name: Build rpm
-        run: |
-          make rpm
