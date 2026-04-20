@@ -3,15 +3,15 @@
 
 Name:           bitshuffle
 Version:        0.5.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Filter for improving compression of typed binary data.
 
 License:        LicenseRef-Callaway-MIT
 URL:            https://github.com/NSLS2/bitshuffle-rpm
 Source0:        https://github.com/kiyo-masui/bitshuffle/archive/refs/tags/%{version}.tar.gz
 
-BuildRequires:  hdf5-devel libzstd-devel gcc
-Requires:       hdf5 libzstd
+BuildRequires:  hdf5-devel lz4-devel libzstd-devel gcc
+Requires:       hdf5 libzstd lz4
 Recommends:     git
 
 BuildArch:      x86_64
@@ -27,6 +27,7 @@ Filter for improving compression of typed binary data.
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_includedirisa} = %{version}-%{release}
 Requires:       hdf5-devel
+Requires:       lz4-devel
 Requires:       libzstd-devel
 
 %description devel
@@ -40,11 +41,14 @@ that use %{name}.
 %build
 
 mkdir build && cd build
-gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../lz4/lz4.c -o lz4.o
-gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../src/iochain.c -o iochain.o
-gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../src/bitshuffle_core.c -o bitshuffle_core.o
-gcc -c -fPIC -O3 -std=c99 -I../lz4 -I../src ../src/bitshuffle.c -o bitshuffle.o
-gcc -shared -Wl,-soname,libbitshuffle.so.%{version} -o libbitshuffle.so.%{version} lz4.o iochain.o bitshuffle_core.o bitshuffle.o -lhdf5 -lzstd
+gcc -c -fPIC -O3 -std=c99 -I../src ../src/iochain.c -o iochain.o
+gcc -c -fPIC -O3 -std=c99 -I../src ../src/bitshuffle_core.c -o bitshuffle_core.o
+gcc -c -fPIC -O3 -std=c99 -I../src ../src/bitshuffle.c -o bitshuffle.o
+# Not sure if we need to include these or not...
+# gcc -c -fPIC -O3 -std=c99 -I../src ../src/bshuf_h5filter.c -o bshuf_h5filter.o
+# gcc -c -fPIC -O3 -std=c99 -I../src ../src/bshuf_h5plugin.c -o bshuf_h5plugin.o
+
+gcc -shared -Wl,-soname,libbitshuffle.so.%{version} -o libbitshuffle.so.%{version} iochain.o bitshuffle_core.o bitshuffle.o -llz4 -lhdf5 -lzstd
 
 
 %install
@@ -55,8 +59,6 @@ gcc -shared -Wl,-soname,libbitshuffle.so.%{version} -o libbitshuffle.so.%{versio
 ln -s libbitshuffle.so.%{version} %{buildroot}%{_libdir}/libbitshuffle.so
 
 cp src/*.h %{buildroot}%{_includedir}/bitshuffle
-cp lz4/*.h %{buildroot}%{_includedir}/bitshuffle
-
 
 %files
 %license LICENSE
@@ -69,5 +71,8 @@ cp lz4/*.h %{buildroot}%{_includedir}/bitshuffle
 
 
 %changelog
+* Mon Apr 20 2026 Wlodek, Jakub <jwlodek@bnl.gov> - 0.5.2-2
+- Use system version of lz4 library.
+
 * Wed Mar 11 2026 Wlodek, Jakub <jwlodek@bnl.gov> - 0.5.2-1
 - Initial release of the bitshuffle library as an rpm.
