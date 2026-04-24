@@ -3,7 +3,7 @@
 
 Name:           bitshuffle
 Version:        0.5.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Filter for improving compression of typed binary data.
 
 License:        LicenseRef-Callaway-MIT
@@ -55,7 +55,7 @@ gcc -shared -Wl,-soname,libbitshuffle.so.%{version} -o libbitshuffle.so.%{versio
 %{__install} -d -m 0755 %{buildroot}%{_libdir}
 %{__install} -d -m 0755 %{buildroot}%{_includedir}/bitshuffle
 
-%{__install} -m 0644 build/libbitshuffle.so.%{version} %{buildroot}%{_libdir}/.
+%{__install} -m 0755 build/libbitshuffle.so.%{version} %{buildroot}%{_libdir}/.
 ln -s libbitshuffle.so.%{version} %{buildroot}%{_libdir}/libbitshuffle.so
 
 cp src/*.h %{buildroot}%{_includedir}/bitshuffle
@@ -71,8 +71,11 @@ cp src/*.h %{buildroot}%{_includedir}/bitshuffle
 
 
 %changelog
-* Mon Apr 20 2026 Wlodek, Jakub <jwlodek@bnl.gov> - 0.5.2-2
+* Mon Apr 20 2026 Wlodek, Jakub <jwlodek@bnl.gov> - 0.5.2-3
 - Use system version of lz4 library.
+
+* Wed Mar 11 2026 Wlodek, Jakub <jwlodek@bnl.gov> - 0.5.2-2
+- Update permissions on main shared library file.
 
 * Wed Mar 11 2026 Wlodek, Jakub <jwlodek@bnl.gov> - 0.5.2-1
 - Initial release of the bitshuffle library as an rpm.

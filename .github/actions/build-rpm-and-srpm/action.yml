@@ -1,0 +1,44 @@
+---
+name: Build RPM and SRPM
+description: Build RPM and SRPM packages for EL8, EL9, and EL10 using GitHub Actions.
+inputs:
+  alma_version:
+    description: 'The version of AlmaLinux to build for (e.g., 8, 9, or 10).'
+    required: true
+    default: '8'
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Install config-manager dnf plugin
+      run: |
+        dnf install -y 'dnf-command(config-manager)'
+      shell: bash
+
+    - name: On EL8, enable PowerTools repository
+      if: matrix.alma_version == '8'
+      run: |
+        dnf config-manager --set-enabled powertools
+      shell: bash
+
+    - name: On newer EL versions, enable CRB repository
+      if: matrix.alma_version != '8'
+      run: |
+        dnf config-manager --set-enabled crb
+      shell: bash
+
+    - name: Enable EPEL repository
+      run: |
+        dnf install -y epel-release
+      shell: bash
+
+    - name: Install dependencies
+      run: |
+        dnf install -y hdf5-devel libzstd-devel gcc make rpmdevtools
+      shell: bash
+
+    - name: Build srpm and rpm
+      run: |
+        make srpm
+        make rpm
+      shell: bash
